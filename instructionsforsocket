@@ -1,0 +1,191 @@
+Creating a WhatsApp-style chat application with Socket.io involves setting up a server and client-side logic that enables real-time communication. To distinguish between messages from the sender and receiver, you can use different styles for each. Here's a step-by-step guide to help you get started:
+
+    Set up the project:
+    Create a new directory for your project and navigate to it in your terminal. Initialize a new Node.js project by running npm init -y. Then, install the necessary dependencies with the following command:
+
+    lua
+
+npm install express socket.io
+
+Create the server:
+Create a new file called server.js and set up an Express server with Socket.io:
+
+javascript
+
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+app.use(express.static('public'));
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('message', (data) => {
+    io.emit('message', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+server.listen(3000, () => {
+  console.log('Server listening on port 3000');
+});
+
+Create the client-side HTML:
+Create a new folder called public and inside it, create an index.html file with the following content:
+
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Style Chat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="chat-container">
+    <div id="chat" class="chat"></div>
+    <form id="messageForm">
+      <input id="messageInput" type="text" placeholder="Type a message..." autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
+
+Create client-side JavaScript:
+In the public folder, create a new file called main.js with the following content:
+
+javascript
+
+const socket = io();
+const chat = document.getElementById('chat');
+const messageForm = document.getElementById('messageForm');
+const messageInput = document.getElementById('messageInput');
+
+messageForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const message = messageInput.value;
+
+  if (message.trim()) {
+    socket.emit('message', { message });
+    addMessage(message, 'sender');
+    messageInput.value = '';
+  }
+});
+
+socket.on('message', (data) => {
+  addMessage(data.message, 'receiver');
+});
+
+function addMessage(message, type) {
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('message', type);
+  messageElement.innerText = message;
+  chat.appendChild(messageElement);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+Add CSS to style messages:
+In the public folder, create a new file called styles.css with the following content:
+
+css
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding:
+
+realspaceorca@gmail.com
+Continue starting with step 5
+
+    Add CSS to style messages:
+    In the public folder, create a new file called styles.css with the following content:
+
+    css
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f1f1f1;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 600px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat {
+      flex-grow: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .message {
+      padding: 8px 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .sender {
+      align-self: flex-end;
+      background-color: #DCF8C6;
+    }
+
+    .receiver {
+      align-self: flex-start;
+      background-color: #E1E1E1;
+    }
+
+    #messageForm {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    #messageInput {
+      flex-grow: 1;
+      border: none;
+      padding: 12px;
+      outline: none;
+    }
+
+    #messageForm button {
+      border: none;
+      background-color: #007bff;
+      color: #fff;
+      padding: 12px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    #messageForm button:hover {
+      background-color: #0056b3;
+    }
+
+    Start the server:
+    Run the server with node server.js in your terminal. Open your browser and navigate to http://localhost:3000. You should now see a simple chat interface styled in a WhatsApp-like manner.
+
+    Test the chat:
+    Open multiple browser windows or tabs, and navigate to http://localhost:3000 in each of them. Send messages from different windows or tabs to see how messages from the sender and receiver are distinguished.
+
+Please note that this example is a simple implementation meant for understanding purposes. It doesn't include features like authentication, multiple chat rooms, or message storage. You can enhance the application by adding these features based on your requirements.
